@@ -178,13 +178,6 @@ For your Pull Request to be accepted, your commits **MUST** include:
 4.  **Push** to the branch (`git push origin feature/NewFeature`).
 5.  Open a **Pull Request**.
 
------
-
-## 📜 License
-
-This project is licensed under the **MIT License**. See the `LICENSE` file for more details.
-
------
 
 ## 📞 Contact
 
@@ -196,4 +189,3 @@ This project is licensed under the **MIT License**. See the `LICENSE` file for m
 
 *If you find this project useful, please give it a ⭐ on GitHub\!*
 
-```
