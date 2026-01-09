@@ -1,0 +1,14 @@
+{
+  "name": "fake-news-detector",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend for Fake News Detector using Vite",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

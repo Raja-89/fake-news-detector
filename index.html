@@ -6,62 +6,71 @@
   <title>Fake News Detector</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#121212] text-white font-sans">
+<body class="bg-white text-slate-800 font-sans">
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-[#121212] shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-violet-400"> Fake News Detector</h1>
-      <nav class="space-x-6">
-        <a href="#home" class="hover:border-b-2 border-violet-500">Home</a>
-        <a href="#about" class="hover:border-b-2 border-violet-500">About</a>
-        <a href="#demo" class="hover:border-b-2 border-violet-500">Try Demo</a>
-        <a href="#contact" class="hover:border-b-2 border-violet-500">Contact</a>
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-semibold text-indigo-600">Fake News Detector</h1>
+      <nav class="hidden sm:flex gap-6 text-sm">
+        <a href="#home" class="hover:text-indigo-600">Home</a>
+        <a href="#about" class="hover:text-indigo-600">About</a>
+        <a href="#demo" class="hover:text-indigo-600">Try Demo</a>
+        <a href="#contact" class="hover:text-indigo-600">Contact</a>
       </nav>
     </div>
   </header>
 
   <!-- Hero -->
   <section id="home" class="text-center py-16 px-4">
-    <h2 class="text-4xl font-bold text-white">Uncover the Truth</h2>
-    <p class="mt-4 text-gray-300 text-xl">Use machine learning to detect fake news in real time.</p>
+    <h2 class="text-4xl font-bold tracking-tight">Detect misinformation with confidence</h2>
+    <p class="mt-4 text-slate-600 text-lg">A simple, fast tool powered by machine learning to classify news as real or fake.</p>
+    <div class="mt-8">
+      <img src="fake_img.jpeg" alt="Illustration" class="mx-auto rounded-lg shadow md:max-w-xl" />
+    </div>
   </section>
-<div style="display: flex; justify-content: center; align-items: center;">
-  <img src="fake_img.jpeg" alt="Image" style="max-width: 100%; height: auto;">
-</div>
-
 
   <!-- About -->
-  <section id="about" class="max-w-4xl mx-auto px-4 py-10">
-    <h3 class="text-2xl font-bold text-white mb-4">About the Fake News Detector</h3>
-    <p class="text-gray-300 mb-4">The Fake News Detector is a machine learning-based project designed to identify whether a given news article is real or fake. It uses Natural Language Processing (NLP) and a logistic regression model trained on a labeled dataset of real and fake news.</p>
-    <ul class="list-disc list-inside text-gray-400">
-      <li>Preprocessing with stopword removal, lemmatization, and cleaning</li>
-      <li>TF-IDF vectorization (unigrams + bigrams)</li>
-      <li>Logistic Regression classification</li>
-      <li>Confidence score in prediction</li>
-    </ul>
-    <p class="mt-4 text-gray-300">Built with Python, scikit-learn, pandas, and NLTK. The model is trained on data from two .csv files: True.csv and Fake.csv. Accuracy is visualized through a confusion matrix and precision-recall report.</p>
+  <section id="about" class="max-w-5xl mx-auto px-4 py-10">
+    <div class="rounded-xl border bg-white shadow-sm p-6">
+      <h3 class="text-2xl font-semibold mb-3">About the detector</h3>
+      <p class="text-slate-600 mb-4">This project uses Natural Language Processing (NLP) with TF-IDF features and a Logistic Regression classifier trained on labeled datasets of real and fake news.</p>
+      <ul class="list-disc list-inside text-slate-700 space-y-1">
+        <li>Text cleaning with stopword removal and lemmatization</li>
+        <li>TF-IDF vectorization (unigrams and bigrams)</li>
+        <li>Logistic Regression classification</li>
+        <li>Confidence score per prediction</li>
+      </ul>
+    </div>
   </section>
 
- 
-  <section id="demo" class="max-w-4xl mx-auto px-4 py-10">
-    <h3 class="text-2xl font-bold text-white mb-4">News Prediction Demo</h3>
-    <textarea id="newsInput" class="w-full h-32 p-4 bg-[#1e1e1e] border-2 border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-400 rounded-lg" placeholder="Paste your news headline or article here..."></textarea>
-    <button onclick="predictNews()" class="mt-4 bg-violet-600 hover:bg-violet-500 transition text-white py-2 px-4 rounded-lg">Detect News</button>
-    <div id="predictionOutput" class="mt-6 text-xl font-semibold text-center"></div>
+  <!-- Demo -->
+  <section id="demo" class="max-w-5xl mx-auto px-4 py-10">
+    <div class="rounded-xl border bg-white shadow-sm p-6">
+      <h3 class="text-2xl font-semibold mb-4">Try it out</h3>
+      <label for="newsInput" class="block text-sm font-medium text-slate-700">Paste a headline or article</label>
+      <textarea id="newsInput" class="mt-2 w-full h-40 p-4 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="Paste your news headline or article here..."></textarea>
+      <button onclick="predictNews()" class="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-lg">
+        Detect News
+      </button>
+      <div id="predictionOutput" class="mt-6 text-center">
+        <!-- Result will appear here -->
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->
-  <footer id="contact" class="bg-[#0d0d0d] py-6 mt-12">
-    <div class="max-w-4xl mx-auto px-4 flex justify-between text-sm text-gray-400">
+  <footer id="contact" class="border-t py-8 mt-12">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between text-sm text-slate-600">
       <div>
-        <span>Contact</span>
-        <p><a href="https://www.instagram.com/raja.rathour.89/?hl=en">Raja Rathour</a></p>
-        <p class="flex gap-4 mt-2">
-          <a href="https://github.com/Raja-89" class="hover:text-violet-400">GitHub</a>
-          <a href="https://www.linkedin.com/in/raja-rathour-067965325/" class="hover:text-violet-400">LinkedIn</a>
-        </p>
+        <span class="font-medium">Contact</span>
+        <p><a href="https://www.instagram.com/raja.rathour.89/?hl=en" class="text-indigo-600 hover:underline">Raja Rathour</a></p>
       </div>
+      <p class="flex gap-4 mt-4 sm:mt-0">
+        <a href="https://github.com/Raja-89" class="hover:text-indigo-600">GitHub</a>
+        <a href="https://www.linkedin.com/in/raja-rathour-067965325/" class="hover:text-indigo-600">LinkedIn</a>
+      </p>
+    </div>
   </footer>
 
   <script>
@@ -71,14 +80,19 @@
       output.innerHTML = "Analyzing...";
 
       try {
-        const response = await fetch('/predict', {
+          const response = await fetch('/predict', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: news })
         });
-
-        const result = await response.json();
-        output.innerHTML = `<span class='text-2xl text-violet-400 font-bold'>${result.label}</span><br/><span class='text-gray-400'>Confidence: ${(result.confidence * 100).toFixed(2)}%</span>`;
+          const result = await response.json();
+          const color = result.label === 'TRUE' ? 'text-green-600' : 'text-red-600';
+          output.innerHTML = `
+            <div class="inline-flex items-center gap-2">
+              <span class="text-2xl font-bold ${color}">${result.label}</span>
+              <span class="text-slate-600">• Confidence: ${(result.confidence * 100).toFixed(2)}%</span>
+            </div>
+          `;
       } catch (err) {
         output.innerHTML = "Error predicting news. Try again!";
       }
