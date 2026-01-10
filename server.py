@@ -6,7 +6,8 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 app = Flask(__name__)
-CORS(
+CORS(app)
+
 # Load model and vectorizer once at startup
 with open("fake_news_model.pkl", "rb") as f:
     model, vectorizer = pickle.load(f)
