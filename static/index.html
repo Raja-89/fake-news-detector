@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake News Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-800 font-sans">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-semibold text-indigo-600">Fake News Detector</h1>
+      <nav class="hidden sm:flex gap-6 text-sm">
+        <a href="#home" class="hover:text-indigo-600">Home</a>
+        <a href="#demo" class="hover:text-indigo-600">Try Demo</a>
+        <a href="#samples" class="hover:text-indigo-600">Samples</a>
+        <a href="#about" class="hover:text-indigo-600">About</a>
+        <a href="#contact" class="hover:text-indigo-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="home" class="text-center py-16 px-4">
+    <h2 class="text-4xl font-bold tracking-tight">Detect misinformation with confidence</h2>
+    <p class="mt-4 text-slate-600 text-lg">A simple, fast tool powered by machine learning to classify news as real or fake.</p>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo" class="max-w-5xl mx-auto px-4 py-10">
+    <div class="rounded-xl border bg-white shadow-sm p-6">
+      <h3 class="text-2xl font-semibold mb-4">Try it out</h3>
+      <label for="newsInput" class="block text-sm font-medium text-slate-700">Paste a headline or article</label>
+      <textarea id="newsInput" class="mt-2 w-full h-40 p-4 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="Paste your news headline or article here..."></textarea>
+      <div class="flex gap-3 mt-4">
+        <button onclick="predictNews()" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-lg transition">
+          🔍 Detect News
+        </button>
+        <button onclick="clearInput()" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 px-4 rounded-lg transition">
+          🗑️ Clear
+        </button>
+      </div>
+      <div id="predictionOutput" class="mt-6 text-center">
+        <!-- Result will appear here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Sample Headlines -->
+  <section id="samples" class="max-w-5xl mx-auto px-4 py-10">
+    <div class="rounded-xl border bg-white shadow-sm p-6">
+      <h3 class="text-2xl font-semibold mb-4">💡 Try Sample Headlines</h3>
+      <p class="text-slate-600 mb-6">Click on any sample headline below to test the detector:</p>
+      
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6 border-b">
+        <button id="fakeSamplesTab" onclick="showSamples('fake')" class="px-4 py-2 font-medium text-red-600 border-b-2 border-red-600">
+          🔴 Fake News Examples
+        </button>
+        <button id="trueSamplesTab" onclick="showSamples('true')" class="px-4 py-2 font-medium text-slate-600 hover:text-green-600">
+          🟢 True News Examples
+        </button>
+      </div>
+      
+      <!-- Fake Samples -->
+      <div id="fakeSamplesContainer" class="space-y-3">
+        <p class="text-center text-slate-500">Loading samples...</p>
+      </div>
+      
+      <!-- True Samples -->
+      <div id="trueSamplesContainer" class="space-y-3 hidden">
+        <p class="text-center text-slate-500">Loading samples...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="max-w-5xl mx-auto px-4 py-10">
+    <div class="rounded-xl border bg-white shadow-sm p-6">
+      <h3 class="text-2xl font-semibold mb-3">About the detector</h3>
+      <p class="text-slate-600 mb-4">This project uses Natural Language Processing (NLP) with TF-IDF features and a Logistic Regression classifier trained on labeled datasets of real and fake news.</p>
+      <ul class="list-disc list-inside text-slate-700 space-y-1">
+        <li>Text cleaning with stopword removal and lemmatization</li>
+        <li>TF-IDF vectorization (unigrams and bigrams)</li>
+        <li>Logistic Regression classification</li>
+        <li>Confidence score per prediction</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="border-t py-8 mt-12">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between text-sm text-slate-600">
+      <div>
+        <span class="font-medium">Contact</span>
+        <p><a href="https://www.instagram.com/raja.rathour.89/?hl=en" class="text-indigo-600 hover:underline">Raja Rathour</a></p>
+      </div>
+      <p class="flex gap-4 mt-4 sm:mt-0">
+        <a href="https://github.com/Raja-89" class="hover:text-indigo-600">GitHub</a>
+        <a href="https://www.linkedin.com/in/raja-rathour-067965325/" class="hover:text-indigo-600">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    let currentTab = 'fake';
+    
+    // Load samples on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSamples('fake');
+      loadSamples('true');
+    });
+    
+    async function loadSamples(type) {
+      try {
+        const response = await fetch(`/samples/${type}`);
+        const data = await response.json();
+        
+        const container = document.getElementById(`${type}SamplesContainer`);
+        container.innerHTML = '';
+        
+        if (data.samples && data.samples.length > 0) {
+          data.samples.forEach((sample, index) => {
+            const card = createSampleCard(sample, index);
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = '<p class="text-center text-slate-500">No samples available</p>';
+        }
+      } catch (error) {
+        console.error(`Error loading ${type} samples:`, error);
+        const container = document.getElementById(`${type}SamplesContainer`);
+        container.innerHTML = '<p class="text-center text-red-500">Failed to load samples</p>';
+      }
+    }
+    
+    function createSampleCard(sample, index) {
+      const card = document.createElement('div');
+      const badgeColor = sample.label === 'fake' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+      const badgeText = sample.label === 'fake' ? 'FAKE' : 'TRUE';
+      const hoverColor = sample.label === 'fake' ? 'hover:border-red-400' : 'hover:border-green-400';
+      
+      card.className = `p-4 border rounded-lg cursor-pointer transition ${hoverColor} hover:shadow-md`;
+      card.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="text-2xl">📰</span>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2 py-1 text-xs font-semibold rounded ${badgeColor}">${badgeText}</span>
+              ${sample.category ? `<span class="text-xs text-slate-500">${sample.category}</span>` : ''}
+            </div>
+            <p class="text-slate-700">${sample.text}</p>
+            ${sample.source ? `<p class="text-xs text-slate-400 mt-2">Source: ${sample.source}</p>` : ''}
+          </div>
+        </div>
+      `;
+      
+      card.onclick = () => selectSample(sample.text);
+      return card;
+    }
+    
+    function selectSample(text) {
+      document.getElementById('newsInput').value = text;
+      document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => predictNews(), 500);
+    }
+    
+    function showSamples(type) {
+      currentTab = type;
+      
+      // Update tabs
+      const fakeTab = document.getElementById('fakeSamplesTab');
+      const trueTab = document.getElementById('trueSamplesTab');
+      const fakeContainer = document.getElementById('fakeSamplesContainer');
+      const trueContainer = document.getElementById('trueSamplesContainer');
+      
+      if (type === 'fake') {
+        fakeTab.className = 'px-4 py-2 font-medium text-red-600 border-b-2 border-red-600';
+        trueTab.className = 'px-4 py-2 font-medium text-slate-600 hover:text-green-600';
+        fakeContainer.classList.remove('hidden');
+        trueContainer.classList.add('hidden');
+      } else {
+        trueTab.className = 'px-4 py-2 font-medium text-green-600 border-b-2 border-green-600';
+        fakeTab.className = 'px-4 py-2 font-medium text-slate-600 hover:text-red-600';
+        trueContainer.classList.remove('hidden');
+        fakeContainer.classList.add('hidden');
+      }
+    }
+    
+    async function predictNews() {
+      const news = document.getElementById('newsInput').value;
+      const output = document.getElementById('predictionOutput');
+      
+      if (!news.trim()) {
+        output.innerHTML = '<p class="text-red-500">Please enter some text to analyze</p>';
+        return;
+      }
+      
+      output.innerHTML = '<p class="text-slate-500">Analyzing...</p>';
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: news })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          const color = result.label === 'TRUE' ? 'text-green-600' : 'text-red-600';
+          const icon = result.label === 'TRUE' ? '🟢' : '🔴';
+          const bgColor = result.label === 'TRUE' ? 'bg-green-50' : 'bg-red-50';
+          
+          output.innerHTML = `
+            <div class="inline-block ${bgColor} px-6 py-4 rounded-lg">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">${icon}</span>
+                <div class="text-left">
+                  <span class="text-2xl font-bold ${color}">${result.label}</span>
+                  <p class="text-slate-600 mt-1">Confidence: <span class="font-semibold">${(result.confidence * 100).toFixed(2)}%</span></p>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          output.innerHTML = `<p class="text-red-500">Error: ${result.error || 'Prediction failed'}</p>`;
+        }
+      } catch (err) {
+        console.error('Prediction error:', err);
+        output.innerHTML = '<p class="text-red-500">Error predicting news. Please try again!</p>';
+      }
+    }
+    
+    function clearInput() {
+      document.getElementById('newsInput').value = '';
+      document.getElementById('predictionOutput').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

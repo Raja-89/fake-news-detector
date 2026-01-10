@@ -1,0 +1,64 @@
+{
+  "samples": [
+    {
+      "text": "BREAKING: Scientists Discover Chocolate Cures All Diseases, Big Pharma Hiding Truth",
+      "label": "fake",
+      "category": "health",
+      "source": "Fabricated example"
+    },
+    {
+      "text": "SHOCKING: World Leaders Secretly Replaced by Robots, Insider Reveals",
+      "label": "fake",
+      "category": "politics",
+      "source": "Fabricated example"
+    },
+    {
+      "text": "Pope Francis Shocks World, Endorses Presidential Candidate",
+      "label": "fake",
+      "category": "politics",
+      "source": "Fabricated example"
+    },
+    {
+      "text": "FBI Agent Suspected in Hillary Email Leaks Found Dead in Apparent Murder-Suicide",
+      "label": "fake",
+      "category": "politics",
+      "source": "Fabricated example"
+    },
+    {
+      "text": "Donald Trump Sent His Own Plane to Transport 200 Stranded Marines",
+      "label": "fake",
+      "category": "politics",
+      "source": "Fabricated example"
+    },
+    {
+      "text": "Washington (Reuters) - The U.S. Senate confirmed Jerome Powell as Federal Reserve chairman",
+      "label": "true",
+      "category": "politics",
+      "source": "Reuters"
+    },
+    {
+      "text": "NASA's Perseverance Rover Successfully Lands on Mars After Seven-Month Journey",
+      "label": "true",
+      "category": "science",
+      "source": "NASA"
+    },
+    {
+      "text": "Supreme Court Upholds Affordable Care Act in 7-2 Decision",
+      "label": "true",
+      "category": "politics",
+      "source": "News archive"
+    },
+    {
+      "text": "Global COVID-19 Vaccine Distribution Reaches 1 Billion Doses Milestone",
+      "label": "true",
+      "category": "health",
+      "source": "WHO"
+    },
+    {
+      "text": "European Union Announces New Climate Change Legislation Targeting Net Zero by 2050",
+      "label": "true",
+      "category": "environment",
+      "source": "EU Press Release"
+    }
+  ]
+}

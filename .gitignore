@@ -11,3 +11,6 @@ build/
 
 # env
 .env
+
+.kiro/
+live_text.txt
