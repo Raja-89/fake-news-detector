@@ -1,262 +1,184 @@
 # Fake News Detector
 
-A machine learning-based fake news detection application with multiple interfaces. This app uses NLP and Logistic Regression to classify news as FAKE or TRUE in real-time, featuring an interactive sample headlines section for easy testing.
+Detect misinformation with a fast, lightweight ML pipeline. This project provides both a Streamlit UI and a Flask + HTML frontend, backed by a Logistic Regression model over TF‑IDF features.
 
-## ✨ Features
+## Quick Start
 
-- **Real-time classification** of news as FAKE or TRUE
-- **Interactive sample headlines** - Test with pre-selected examples
-- **Dual interfaces** - Streamlit and Flask/HTML options
-- **High accuracy** - Trained on labeled news datasets
-- **Confidence scores** - See prediction confidence for each classification
-- **Clean architecture** - Modular, maintainable codebase
+On Windows PowerShell:
 
-## 📁 Project Structure
+```powershell
+# 1) (Recommended) Create a virtual environment
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 2) Install dependencies
+pip install -r requirements.txt
+
+# 3) Ensure NLTK data is available (first run only)
+python -c "import nltk; nltk.download('stopwords'); nltk.download('wordnet')"
+
+# 4) Run one of the UIs
+# Streamlit (interactive UI)
+python run_streamlit.py
+
+# OR Flask (serves static HTML + REST API)
+python run_flask.py
+```
+
+If you don’t have a trained model yet, run the training script first (see Training).
+
+## Features
+
+- Real-time classification of news as FAKE or TRUE
+- Confidence score for each prediction
+- Curated sample headlines (Fake vs True) for one‑click testing
+- Two UIs: Streamlit and Flask + HTML
+- Clean, modular architecture (services, utils, config)
+
+## Project Structure
 
 ```
 fake-news-detector/
 ├── src/
-│   ├── config.py                 # Central configuration
+│   ├── config.py                 # Central configuration (paths, hyperparams, UI)
 │   ├── utils/
-│   │   └── text_processor.py    # Text cleaning and preprocessing
+│   │   └── text_processor.py    # Text cleaning & preprocessing
 │   ├── services/
-│   │   ├── model_service.py     # Model loading and prediction
+│   │   ├── model_service.py     # Model loading & prediction
 │   │   └── sample_service.py    # Sample headlines management
 │   ├── data/
-│   │   └── samples.json         # Sample headlines data
+│   │   └── samples.json         # Curated sample headlines
 │   └── ui/
 │       ├── streamlit_app.py     # Streamlit interface
-│       └── flask_app.py         # Flask API
+│       └── flask_app.py         # Flask API serving static HTML
 ├── static/
-│   └── index.html               # HTML interface
+│   └── index.html               # HTML interface (uses Flask endpoints)
 ├── models/
-│   └── fake_news_model.pkl      # Trained ML model
+│   └── fake_news_model.pkl      # Trained model (with vectorizer)
 ├── scripts/
-│   └── train_model.py           # Model training script
+│   └── train_model.py           # Training script (LogReg + TF‑IDF)
+├── index.html                   # Optional Vite dev server entry
+├── vite.config.ts               # Vite proxy to Flask /predict
+├── package.json                 # Vite frontend scripts
+├── run_flask.py                 # Convenience launcher (Flask)
+├── run_streamlit.py             # Convenience launcher (Streamlit)
 ├── requirements.txt
-└── README.md
+└── Readme.md
 ```
 
-## 🚀 Installation
+## Running the Apps
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Raja-89/fake-news-detector.git
-   cd fake-news-detector
-   ```
+### Streamlit (Recommended)
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```powershell
+python run_streamlit.py
+```
+Then open http://localhost:8501. Includes dark theme, tabs for samples, one‑click testing, and confidence display.
 
-3. **Download NLTK resources:**
-   ```python
-   python -c "import nltk; nltk.download('stopwords'); nltk.download('wordnet')"
-   ```
+### Flask + HTML (Lightweight)
 
-4. **Ensure model file exists:**
-   - The trained model should be at `models/fake_news_model.pkl` or `fake_news_model.pkl`
-   - If not present, train the model (see Training section below)
+```powershell
+python run_flask.py
+```
+Then open http://127.0.0.1:5000. Serves `static/index.html` which calls the Flask REST endpoints.
 
-## 💻 Usage
+### Optional: Vite Frontend Dev Server
 
-### Option 1: Streamlit Interface (Recommended)
+If you prefer running a modern dev server for the HTML page:
 
-Run the Streamlit app for an interactive web interface:
+```powershell
+# In one terminal, run Flask (backend)
+python run_flask.py
 
-```bash
-streamlit run src/ui/streamlit_app.py
+# In another terminal, run Vite (frontend)
+npx vite
+# or
+npm run dev
 ```
 
-Then open your browser to `http://localhost:8501`
+The Vite server (default at http://localhost:5173) proxies `/predict` to the Flask backend (see `vite.config.ts`). Use `index.html` (root) for dev, or `static/index.html` when served by Flask.
 
-**Features:**
-- Dark theme interface
-- Tabbed sample headlines (Fake vs True)
-- One-click testing of samples
-- Clear button to reset input
-- Confidence score display
+## API (Flask)
 
-### Option 2: Flask/HTML Interface
+Base URL: `http://127.0.0.1:5000`
 
-Run the Flask server for a lightweight HTML interface:
+- `POST /predict`
+  - Request body:
+    ```json
+    { "text": "News headline or article text" }
+    ```
+  - Response body:
+    ```json
+    { "label": "FAKE", "confidence": 0.95, "is_fake": true }
+    ```
 
-```bash
-python src/ui/flask_app.py
+- `GET /samples` — All samples
+- `GET /samples/fake?count=5` — Fake samples
+- `GET /samples/true?count=5` — True samples
+- `GET /health` — Health check
+
+Quick test from PowerShell:
+
+```powershell
+curl -Method Post -Uri http://127.0.0.1:5000/predict -ContentType 'application/json' -Body '{"text":"Breaking: Aliens land in NYC"}'
 ```
 
-Then open your browser to `http://localhost:5000`
+## Training
 
-**Features:**
-- Clean, responsive design
-- Sample headlines in grid layout
-- RESTful API endpoints
-- Smooth animations
+Train your own model (Logistic Regression over TF‑IDF):
 
-## 🧪 Sample Headlines Feature
+1) Place `True.csv` and `Fake.csv` in the project root, each with a `text` column.
 
-Both interfaces include curated sample headlines for quick testing:
+2) Run:
 
-**Fake News Examples (5):**
-- Sensational health claims
-- Conspiracy theories
-- Misleading political stories
-
-**True News Examples (5):**
-- Verified political news
-- Scientific announcements
-- Official government statements
-
-Click any sample to automatically populate the input field and run prediction!
-
-## 🔧 Training the Model
-
-If you need to retrain the model with your own data:
-
-1. **Prepare datasets:**
-   - Place `True.csv` and `Fake.csv` in the project root
-   - Each CSV should have a `text` column with news articles
-
-2. **Run training script:**
-   ```bash
-   python scripts/train_model.py
-   ```
-
-3. **Model will be saved to:**
-   - `models/fake_news_model.pkl`
-
-**Training details:**
-- Algorithm: Logistic Regression
-- Features: TF-IDF (unigrams + bigrams)
-- Max features: 5000
-- Preprocessing: Stopword removal, lemmatization
-
-## 🔌 API Endpoints (Flask)
-
-### `POST /predict`
-Predict if news text is fake or true.
-
-**Request:**
-```json
-{
-  "text": "News headline or article text"
-}
+```powershell
+python scripts/train_model.py
 ```
 
-**Response:**
-```json
-{
-  "label": "FAKE",
-  "confidence": 0.95,
-  "is_fake": true
-}
-```
+3) Output: `models/fake_news_model.pkl` (contains both the classifier and vectorizer).
 
-### `GET /samples`
-Get all sample headlines.
+Model defaults are controlled in `src/config.py`:
 
-### `GET /samples/fake`
-Get fake news samples only.
+- `MAX_FEATURES = 5000`
+- `MIN_DF = 2`
+- `MAX_DF = 0.95`
+- `NGRAM_RANGE = (1, 2)`
+- `MIN_WORD_LENGTH = 2`
 
-### `GET /samples/true`
-Get true news samples only.
+## Troubleshooting
 
-### `GET /health`
-Health check endpoint.
+- Model not found: Ensure `models/fake_news_model.pkl` exists. If missing, run the training script.
+- NLTK data missing: Run `python -c "import nltk; nltk.download('stopwords'); nltk.download('wordnet')"` once.
+- Port already in use: Change `FLASK_PORT` in `src/config.py` or stop the conflicting process.
+- Windows execution policy blocks venv activation: Run PowerShell as Administrator and execute `Set-ExecutionPolicy RemoteSigned` (understanding the security implications), or use `cmd.exe` to activate: `.\.venv\Scripts\activate.bat`.
 
-## 🏗️ Architecture
+## Tech Stack
 
-### Core Components
+- Python (Flask, Streamlit)
+- scikit‑learn (Logistic Regression)
+- NLTK (stopwords, lemmatization)
+- Tailwind CSS (static UI)
+- Vite (optional frontend dev server)
 
-1. **TextProcessor** (`src/utils/text_processor.py`)
-   - Cleans and preprocesses text
-   - Removes URLs, HTML, special characters
-   - Applies stopword removal and lemmatization
+## Architecture Highlights
 
-2. **ModelService** (`src/services/model_service.py`)
-   - Loads and caches ML model
-   - Generates predictions with confidence scores
-   - Handles errors gracefully
+- `TextProcessor` — robust cleaning pipeline (URLs, HTML, non‑alpha, stopwords, lemmatization)
+- `ModelService` — loads/caches model + vectorizer; returns label, confidence, is_fake
+- `SampleService` — loads curated samples from `src/data/samples.json`
+- `Config` — all paths, hyperparameters, and UI settings in one place
 
-3. **SampleService** (`src/services/sample_service.py`)
-   - Manages sample headlines
-   - Loads from JSON with fallback
-   - Filters by label (fake/true)
+## Contributing
 
-4. **Config** (`src/config.py`)
-   - Centralizes all configuration
-   - Model paths and hyperparameters
-   - UI settings
+Pull requests are welcome. For major changes, please open an issue first to discuss what you’d like to change.
 
-### Design Principles
-
-- **Separation of concerns** - Clear module boundaries
-- **No code duplication** - Shared utilities across UIs
-- **Error handling** - Graceful degradation
-- **Extensibility** - Easy to add new features
-
-## 📊 Model Performance
-
-- **Accuracy:** ~95% (on test set)
-- **Features:** TF-IDF with 5000 max features
-- **Training data:** Labeled news articles dataset
-- **Preprocessing:** Comprehensive text cleaning pipeline
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👤 Contact
+## Contact
 
 **Raja Rathour**
+
 - Instagram: [@raja.rathour.89](https://www.instagram.com/raja.rathour.89/?hl=en)
 - GitHub: [@Raja-89](https://github.com/Raja-89)
 - LinkedIn: [Raja Rathour](https://www.linkedin.com/in/raja-rathour-067965325/)
 
-## 🙏 Acknowledgements
-
-- [Streamlit](https://streamlit.io/) - Interactive web apps
-- [Flask](https://flask.palletsprojects.com/) - Lightweight web framework
-- [scikit-learn](https://scikit-learn.org/) - Machine learning library
-- [NLTK](https://www.nltk.org/) - Natural language processing
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-
-## 📚 Technical Details
-
-### Text Preprocessing Pipeline
-
-1. Convert to lowercase
-2. Remove content in square brackets
-3. Remove URLs
-4. Remove HTML tags
-5. Remove non-alphabetic characters
-6. Remove stopwords
-7. Apply lemmatization
-8. Filter by minimum word length
-
-### Model Training Pipeline
-
-1. Load and combine datasets
-2. Clean and preprocess text
-3. TF-IDF vectorization (unigrams + bigrams)
-4. Train Logistic Regression classifier
-5. Evaluate on test set
-6. Save model and vectorizer
-
-### Configuration Options
-
-Edit `src/config.py` to customize:
-- Model file paths
-- TF-IDF parameters (max_features, min_df, max_df)
-- N-gram range
-- UI settings (host, port, theme colors)
-- Sample data paths
-
 ---
 
-**Made with ❤️ by Raja Rathour**
+Made with ❤️
